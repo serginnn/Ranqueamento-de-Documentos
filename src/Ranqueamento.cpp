@@ -27,7 +27,6 @@ void processarDocumento(const string& nome_arquivo, Documento& doc, unordered_ma
     string palavra;
     unordered_map<string, int> freqTermos;
 
-    // Contagem de termos no documento
     while (arquivo >> palavra) {
         removerPontuacao(palavra);
         transform(palavra.begin(), palavra.end(), palavra.begin(), ::tolower);
@@ -40,32 +39,28 @@ void processarDocumento(const string& nome_arquivo, Documento& doc, unordered_ma
     int totalTermos = 0;
     for (const auto& par : freqTermos) {
         totalTermos += par.second;
-        freqGlobal[par.first]++; // Atualiza a frequência global (DF)
+        freqGlobal[par.first]++; 
     }
 
-    doc.tf_idf.clear(); // Limpa o mapa tf_idf do documento
+    doc.tf_idf.clear(); 
 
-    // Calcula TF e armazena no documento
     for (const auto& par : freqTermos) {
         double TF = static_cast<double>(par.second) / totalTermos;
-        doc.tf_idf[par.first] = TF; // Apenas o TF neste estágio
+        doc.tf_idf[par.first] = TF; 
     }
 }
 
 void calcularIDF(vector<Documento>& documentos, const unordered_map<string, int>& freqGlobal) {
     int totalDocumentos = documentos.size();
 
-    // Ajuste de IDF para cada documento
     for (auto& doc : documentos) {
         for (auto& par : doc.tf_idf) {
             const string& termo = par.first;
             double TF = par.second;
             int Df = freqGlobal.at(termo);
 
-            // Calcula o IDF de acordo com a fórmula do método fornecido
             double IdF = log(static_cast<double>(1 + totalDocumentos) / (1 + Df));
 
-            // Atualiza TF-IDF
             doc.tf_idf[termo] = TF * IdF;
         }
     }
