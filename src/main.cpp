@@ -28,31 +28,34 @@ int main() {
 
     calcularIDF(documentos, freqGlobal);
 
-    string frasePesquisa;
-    cout << "Digite uma frase de pesquisa: ";
-    getline(cin, frasePesquisa);
+    vector<string> frasesPesquisa;
+    lerFrases("dataset/frases.txt", frasesPesquisa);
 
-    vector<string> termosPesquisa;
-    istringstream stream(frasePesquisa);
-    string palavra;
+    for (const auto& frasePesquisa : frasesPesquisa) {
 
-    while (stream >> palavra) {
-        removerPontuacao(palavra);
-        transform(palavra.begin(), palavra.end(), palavra.begin(), ::tolower);
-        if (!isStopword(palavra, stopwords)) {
-            termosPesquisa.push_back(palavra);
+        vector<string> termosPesquisa;
+        istringstream stream(frasePesquisa);
+        string palavra;
+
+        while (stream >> palavra) {
+            removerPontuacao(palavra);
+            transform(palavra.begin(), palavra.end(), palavra.begin(), ::tolower);
+            if (!isStopword(palavra, stopwords)) {
+                termosPesquisa.push_back(palavra);
+            }
         }
-    }
 
-    for (auto& doc : documentos) {
-        calcularRelevancia(doc, termosPesquisa);
-    }
+        for (auto& doc : documentos) {
+            calcularRelevancia(doc, termosPesquisa);
+        }
 
-    ordenarDocumentos(documentos);
+        ordenarDocumentos(documentos);
 
-    cout << "Ranking dos documentos:\n";
-    for (const auto& doc : documentos) {
-        cout << doc.nome << " - Relevância: " << doc.relevancia << "\n";
+        cout << "Ranking dos documentos para a frase: \"" << frasePesquisa << "\"\n";
+        for (const auto& doc : documentos) {
+            cout << doc.nome << " - Relevância: " << doc.relevancia << "\n";
+        }
+        cout << "----------------------------------" << "\n";
     }
 
     return 0;

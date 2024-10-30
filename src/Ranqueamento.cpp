@@ -80,3 +80,11 @@ void ordenarDocumentos(vector<Documento>& documentos) {
         return a.relevancia > b.relevancia;
     });
 }
+
+void lerFrases(const string& nome_arquivo, vector<string>& frases) {
+    ifstream arquivo(nome_arquivo);
+    string linha;
+    while (getline(arquivo, linha)) {
+        frases.push_back(linha);
+    }
+}

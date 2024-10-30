@@ -23,5 +23,6 @@ void calcularIDF(vector<Documento>& documentos, const unordered_map<string, int>
 void calcularRelevancia(Documento& doc, const vector<std::string>& frasePesquisa);
 void ordenarDocumentos(vector<Documento>& documentos);
 void removerPontuacao(string& palavra);
+void lerFrases(const string& nome_arquivo, vector<string>& frases);
 
 #endif
