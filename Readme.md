@@ -195,42 +195,18 @@ Falar sobre uso de memoria O(n)o documento e comparar com arvore e grafo
 
 
 ## Análise Crítica
-1. Uso de Árvores
-a) Árvore de Busca (como AVL ou Red-Black Tree) para Stopwords e Frequências de Termos:
+**1. Uso de Árvores de Busca (como AVL ou Red-Black Tree) para Stopwords e Frequências de Termos**:
 
     Em vez de um unordered_set para as stopwords, uma estrutura de árvore balanceada (como uma árvore AVL ou Red-Black) poderia ser usada para armazenar as stopwords ou o índice global de frequência dos termos. Isso permite buscas eficientes com uma complexidade O(log n) e uma melhor organização de dados quando há uma grande quantidade de termos ou stopwords.
     Vantagem: Pode ser mais eficiente para grandes conjuntos de dados onde a busca O(log n) é preferível a buscas em média O(1) (como em hash tables), especialmente se o balanceamento é importante para a estrutura.
 
-b) Árvore Trie para Indexação de Palavras:
 
-    Um Trie (ou Prefix Tree) poderia ser usado para armazenar os termos dos documentos ou as stopwords, facilitando a busca de palavras por prefixos, o que seria útil se houvesse a necessidade de busca aproximada ou de autocompletar palavras.
-    Vantagem: Uma Trie torna as buscas de prefixos muito eficientes e pode ajudar a encontrar termos rapidamente com uma complexidade proporcional ao comprimento da palavra (O(m) onde m é o comprimento da palavra), sem depender do número total de palavras.
-
-c) Árvore de Segmentos para Consultas em Intervalos:
-
-    Uma árvore de segmentos poderia ser útil para calcular estatísticas de frequência de palavras em intervalos específicos do texto, se houvesse a necessidade de analisar documentos em segmentos (como capítulos ou seções).
-    Vantagem: Permite calcular frequências em intervalos específicos de maneira eficiente, o que pode ser útil para análise de subpartes de documentos.
-
-2. Uso de Grafos
-a) Grafo de Similaridade entre Documentos:
+2. Uso de Grafos entre Documentos:
 
     Os documentos podem ser representados como nós em um grafo, com arestas que conectam documentos "similares" (com base em métricas de similaridade, como cosseno ou Jaccard, em função dos termos ou do TF-IDF). Dessa forma, os documentos mais semelhantes ficam próximos uns dos outros.
     Vantagem: Facilita a recomendação de documentos relacionados. Por exemplo, ao calcular a relevância de um documento específico para uma frase de pesquisa, o sistema também poderia sugerir documentos vizinhos no grafo que têm uma alta similaridade.
 
-b) PageRank ou Algoritmos de Centralidade para Classificação de Documentos:
 
-    Se cada documento fosse um nó e houvesse relações entre eles (como referências, links, ou similaridades), o uso de um algoritmo como PageRank poderia ajudar a classificar os documentos com base na "importância" de cada um.
-    Vantagem: Documentos que são mais centrais ou altamente conectados no grafo poderiam ser ranqueados mais alto, o que poderia ser útil para buscar relevância considerando tanto o conteúdo quanto a interconexão entre documentos.
-
-c) Grafo de Coocorrência de Termos:
-
-    Em vez de apenas armazenar a frequência de cada termo de forma independente, um grafo de coocorrência de termos poderia capturar a relação entre os termos que aparecem juntos nos documentos.
-    Vantagem: Facilita a identificação de termos que frequentemente ocorrem juntos, o que poderia ajudar em tarefas de expansão de consultas ou na detecção de contextos. Isso poderia enriquecer a relevância dos resultados ao considerar a associação de termos.
-
-d) Grafo de Sinônimos e Termos Relacionados:
-
-    Caso o projeto precise lidar com sinônimos, um grafo de sinônimos ou de relações semânticas poderia conectar palavras com significados semelhantes ou relacionados.
-    Vantagem: Ao expandir a pesquisa para incluir sinônimos ou termos relacionados, o sistema poderia oferecer resultados mais relevantes, mesmo se os termos exatos da pesquisa não estiverem no documento. Isso aumenta a cobertura de resultados relevantes para consultas com palavras diferentes.
 
 Vantagens e Desvantagens Comparativas
 
@@ -250,7 +226,7 @@ Resumo
 
 
 ## Considerações Finais
-
+Nota-se que estruturas como `unordered_map` e `vector` apresentam bom desempenho. Entretanto com o uso de estrutura mais avançadas melhores tempos de processamento poderiam ser alcançados, com custo médio $\ O(nlogn) $. Além  de vantagens relacionadas a busca, com métodos ordenados que ajudam na busca e manutenção, caso necessário.
 
 
 
