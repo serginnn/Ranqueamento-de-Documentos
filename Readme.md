@@ -14,8 +14,8 @@
   * [Estrutura de dados](#estrutura-de-dados)
   * [Operações e complexidade](#operações-e-complexidade)
   * [Funcionamento](#funcionamento)
-  * [Desemepenho](#desempenho)
   * [Compilação](#compilação)
+  * [Desemepenho](#desempenho)
 * [Análise Crítica](#análise-crítica)
 * [Considerações Finais](#considerações-finais)
 
