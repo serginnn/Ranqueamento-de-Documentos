@@ -15,7 +15,6 @@
   * [Operações e complexidade](#operações-e-complexidade)
   * [Funcionamento](#funcionamento)
   * [Compilação](#compilação)
-  * [Desemepenho](#desempenho)
 * [Análise Crítica](#análise-crítica)
 * [Considerações Finais](#considerações-finais)
 
@@ -188,45 +187,31 @@ Para executar o programa foi utilizado um arquivo Makefile que realiza o process
 |  `make`                | Executa a compilação do programa utilizando o gcc, e o resultado vai para a pasta build               |
 |  `make run`            | Executa o programa da pasta build após a realização da compilação                                     |
 
-### Desempenho 
-Falar sobre uso de memoria O(n)o documento e comparar com arvore e grafo 
-
-
-
-
 ## Análise Crítica
-**1. Uso de Árvores de Busca (como AVL ou Red-Black Tree) para Stopwords e Frequências de Termos**:
+**1. Uso de Árvores de Busca (como AVL ou BTS) para Stopwords e Frequências de Termos**:
 
-    Em vez de um unordered_set para as stopwords, uma estrutura de árvore balanceada (como uma árvore AVL ou Red-Black) poderia ser usada para armazenar as stopwords ou o índice global de frequência dos termos. Isso permite buscas eficientes com uma complexidade O(log n) e uma melhor organização de dados quando há uma grande quantidade de termos ou stopwords.
-    Vantagem: Pode ser mais eficiente para grandes conjuntos de dados onde a busca O(log n) é preferível a buscas em média O(1) (como em hash tables), especialmente se o balanceamento é importante para a estrutura.
+Em vez de um unordered_set para as stopwords, uma estrutura de árvore balanceada (como uma árvore AVL ou BTS) poderia ser usada para armazenar as stopwords ou o índice global de frequência dos termos. 
 
+Isso permite buscas eficientes com uma complexidade $\ O(log n)$ e uma melhor organização de dados quando há uma grande quantidade de termos ou stopwords. Tendo em vista que os dados são guardados ordenadamente, tornando possível realizar busca por prefixos ou intervalos.
 
-2. Uso de Grafos entre Documentos:
+Podendo ser mais eficiente para grandes conjuntos de dados onde a busca $\ O(log n)$ é preferível a buscas em média $\ O(1)$ (como em hash tables), especialmente se o balanceamento é importante para a estrutura. 
 
-    Os documentos podem ser representados como nós em um grafo, com arestas que conectam documentos "similares" (com base em métricas de similaridade, como cosseno ou Jaccard, em função dos termos ou do TF-IDF). Dessa forma, os documentos mais semelhantes ficam próximos uns dos outros.
-    Vantagem: Facilita a recomendação de documentos relacionados. Por exemplo, ao calcular a relevância de um documento específico para uma frase de pesquisa, o sistema também poderia sugerir documentos vizinhos no grafo que têm uma alta similaridade.
-
+Entretanto estruturas como árvores possuem uma maior complexidade, uma vez que precisam de operações adicionais de balanceamento durante a inserção e remoção de elementos. Além de consumirem mais memória.
 
 
-Vantagens e Desvantagens Comparativas
+**2. Uso de Grafos entre Documentos**:
 
-    Vantagens:
-        Árvores e grafos permitem uma estrutura de dados mais organizada e facilitam a criação de relações complexas entre termos ou documentos.
-        Estruturas de árvore podem garantir tempo de busca eficiente e são úteis para armazenar dados hierarquicamente.
-        Grafos são poderosos para capturar relacionamentos entre documentos ou termos, permitindo não só buscas, mas também análise de relacionamentos (como similaridade, centralidade, ou recomendação).
-    Desvantagens:
-        A implementação e manutenção de árvores e grafos podem ser mais complexas em comparação a estruturas de dados lineares ou hash.
-        O custo de construção de grafos, especialmente se envolver cálculos de similaridade entre todos os documentos, pode ser computacionalmente caro, principalmente para grandes bases de dados.
-        As operações de inserção e atualização podem ser mais lentas em estruturas de árvore balanceadas e grafos, dependendo do número de documentos e do dinamismo da base.
+Os documentos podem ser representados como nós em um grafo, com arestas que conectam documentos "similares" (com base em métricas de similaridade, como cosseno ou Jaccard, em função dos termos ou do TF-IDF). Dessa forma, os documentos mais semelhantes ficam próximos uns dos outros.
 
-Resumo
-
-    Árvores podem ser mais adequadas para indexação e busca eficiente de palavras, enquanto grafos são ideais para representar relações complexas, como similaridade ou sinônimos.
-    A escolha entre árvores, grafos ou estruturas de dados lineares depende do tamanho do projeto e da necessidade de análise relacional entre documentos. Em projetos de busca mais complexos, o uso de árvores e grafos pode melhorar a precisão e a flexibilidade da pesquisa, mas ao custo de maior complexidade.
+Facilitando a recomendação de documentos relacionados. Por exemplo, ao calcular a relevância de um documento específico para uma frase de pesquisa, o sistema também poderia sugerir documentos vizinhos no grafo que têm uma alta similaridade.
 
 
 ## Considerações Finais
-Nota-se que estruturas como `unordered_map` e `vector` apresentam bom desempenho. Entretanto com o uso de estrutura mais avançadas melhores tempos de processamento poderiam ser alcançados, com custo médio $\ O(nlogn) $. Além  de vantagens relacionadas a busca, com métodos ordenados que ajudam na busca e manutenção, caso necessário.
+Nota-se que estruturas como `unordered_map` e `vector` apresentam bom desempenho para esse trabalho. O uso de estrutura mais avançadas como arvores e grafos apesar de apresentarem custo médio $\ O(logn) $ até para conjuntos de dados muito grandes, requerem um custo de memória maior e uma maior implementação. 
+
+Assim sendo para esse problema as estruturas utilizadas apesar de mais simples, exercem uma boa eficiência no geral. Com valores melhores para operações de simples inserções e busca de termos individuais.
+
+Entretanto para trabalhos maiores e mais complexos, a busca com métodos ordenados presente nos algoritmos de arvores e grafos ajudam na busca e manutenção, caso necessário. Além do tempo que pravalecerá melhor nas estruturas mais complexas.
 
 
 
