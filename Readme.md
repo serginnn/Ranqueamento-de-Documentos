@@ -47,7 +47,7 @@ Por ultimo também foi utilizado uma `struct Documento` para armazenar informaç
 
 
 ### Operações e complexidade
-1.carregarStopwords
+1. carregarStopwords
 ```Markdown
 void carregarStopwords(const string& nome_arquivo, unordered_set<string>& stopwords) {
     ifstream arquivo(nome_arquivo);
@@ -59,7 +59,7 @@ void carregarStopwords(const string& nome_arquivo, unordered_set<string>& stopwo
 ```
 Nessa operação é realiza a leitura do arquivo das stopwords e as palavras são adicionadas na hash. Seu custo computacional é O(n), dependendo apenas da quantidade de stopwords.
 
-2.isStopword
+2. isStopword
 ```Markdown
 bool isStopword(const string& palavra, const unordered_set<string>& stopwords) {
     return stopwords.count(palavra) > 0;
@@ -67,7 +67,7 @@ bool isStopword(const string& palavra, const unordered_set<string>& stopwords) {
 ```
 A operação verifica se uma palavra é stopword. Apresentando custo O(1) que remete ao custo do acesso a `unordered_set`.
 
-3.removerPontuacao
+3. removerPontuacao
 ```Markdown
 void removerPontuacao(string& palavra) {
     palavra.erase(remove_if(palavra.begin(), palavra.end(), ::ispunct), palavra.end());
@@ -75,7 +75,7 @@ void removerPontuacao(string& palavra) {
 ```
 Nessa parte do código é realizada a remoção da pontuação, pois a pontuação não apresenta importância na pesquisa. Para tal utiliza-se `remove_if` para localizar os caracteres de pontuação e `erase` para remove-los, não apresentando custo expressivo.
 
-4.processarDocumento
+4. processarDocumento
 ```Markdown
 void processarDocumento(const string& nome_arquivo, Documento& doc, unordered_map<string, int>& freqGlobal, const unordered_set<string>& stopwords) {
     ifstream arquivo(nome_arquivo);
@@ -107,7 +107,7 @@ void processarDocumento(const string& nome_arquivo, Documento& doc, unordered_ma
 ```
 Nesse método é realizada a leitura dos arquivos, transformação da letra para minúscula, contagem da frequência de termos e o cálculo do TF. Apresentando complexidade O(n).
 
-5.calcularIDF
+5. calcularIDF
 ```Markdown
 void calcularIDF(vector<Documento>& documentos, const unordered_map<string, int>& freqGlobal) {
     int totalDocumentos = documentos.size();
@@ -125,8 +125,8 @@ void calcularIDF(vector<Documento>& documentos, const unordered_map<string, int>
     }
 }
 ```
-
-6.calcularRelevancia
+A função percorre cada termo em cada documento, calcula o IDF e multiplica pelo TF para obter o TF-IDF. Assim apresentando uma complexidade de $\ O(n) *quantidade de documentos $.
+6. calcularRelevancia
 ```Markdown
 void calcularRelevancia(Documento& doc, const vector<string>& frasePesquisa) {
     doc.relevancia = 0;
@@ -137,7 +137,9 @@ void calcularRelevancia(Documento& doc, const vector<string>& frasePesquisa) {
     }
 }
 ```
-7.Ordenação
+A função calcula a relevância de cada documento para uma frase de pesquisa, somando o TF-IDF de cada termo da frase que aparece no documento. Dessa forma analisando assíntoticamente o custo computacional é $\ O(n) $ uma vez que a busca na hash tem custo $\ O(1) $ e o gasto esta em percorrer a frse de pesquisa.
+
+7. Ordenação
 ```Markdown
 void ordenarDocumentos(vector<Documento>& documentos) {
     sort(documentos.begin(), documentos.end(), [](const Documento& a, const Documento& b) {
@@ -149,17 +151,21 @@ Para ordenar os documentos de acordo com os resultados obtidos a partir da frase
 
 O `std::sort` usa o Introsort, que combina o Quicksort, Heapsort, e Insertion Sort. O Introsort começa com o Quicksort, mas monitora a profundidade da recursão. Se ela ultrapassar um limite, o algoritmo muda para o Heapsort para evitar o pior caso do Quicksort. No final, o Insertion Sort é usado em pequenos segmentos para otimizar ainda mais a ordenação. Tendo um custo $\ O(nlogn)$, o que a torna eficiente para a maioria dos casos.
 
+- Conclusão
+Pode-se definir então que o custo médio do algoritmo no geral é de $\ (nlogn) $ considerando $\ n $ o número total de palavras em todos os documentos
 
 ### Funcionamento
-Exemplo de entrada:
+
+* Exemplo de entrada:
 ```Markdown
 Deus, seja louvado!
 Amanha vou tomar sorvete
 que dia lindo
 Madrid dia
 ```
-Cada frase deve estar em uma linha do arquivo  
-Exemplo de saída: 
+Cada frase deve estar em uma linha do arquivo [frases.txt](dataset/frases.txt).
+
+* Exemplo de saída: 
 ```Markdown
 Ranking dos documentos para a frase: "Deus, seja louvado!"
 dataset/biblia.txt - Relevância: 0.00105657
@@ -169,7 +175,7 @@ dataset/quincas_borba.txt - Relevância: 0.000127848
 dataset/A_mão_e_a_luva.txt - Relevância: 9.52416e-05
 dataset/terremoto.txt - Relevância: 0
 ```
-
+A saída é ordenada com base no resultado obtido dos cálculos e para cada frase uma saída nova é apresentada no terminal.
 ### Desempenho 
 Falar sobre uso de memoria O(n)o documento e comparar com arvore e grafo 
 
@@ -232,7 +238,7 @@ Resumo
 
 
 ## Considerações Finais
-Embora a estrutura atual seja funcional e atende aos requisitos do trabalho, o uso de árvores AVL e grafos fornece um entendimento mais profundo sobre o processamento eficiente de dados textuais. A implementação dessas estruturas oferece uma solução otimizada para o sistema de ranqueamento de documentos, reduzindo tempos de busca e inserção e permitindo a modelagem de relações complexas entre documentos e termos de p
+
 
 
 
