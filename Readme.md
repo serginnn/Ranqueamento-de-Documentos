@@ -16,7 +16,7 @@
   * [Funcionamento](#funcionamento)
   * [Desemepenho](#desempenho)
 * [Análise Crítica](#análise-crítica)
-* [Conclusão](#conclusão)
+* [Considerações Finais](#considerações-finais)
 * [Compilação](#compilação)
 
 
@@ -231,8 +231,8 @@ Resumo
     A escolha entre árvores, grafos ou estruturas de dados lineares depende do tamanho do projeto e da necessidade de análise relacional entre documentos. Em projetos de busca mais complexos, o uso de árvores e grafos pode melhorar a precisão e a flexibilidade da pesquisa, mas ao custo de maior complexidade.
 
 
-## Conclusão 
-
+## Considerações Finais
+Embora a estrutura atual seja funcional e atende aos requisitos do trabalho, o uso de árvores AVL e grafos fornece um entendimento mais profundo sobre o processamento eficiente de dados textuais. A implementação dessas estruturas oferece uma solução otimizada para o sistema de ranqueamento de documentos, reduzindo tempos de busca e inserção e permitindo a modelagem de relações complexas entre documentos e termos de p
 
 
 
