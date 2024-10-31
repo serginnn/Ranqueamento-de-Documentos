@@ -190,7 +190,7 @@ Para executar o programa foi utilizado um arquivo Makefile que realiza o process
 ## Análise Crítica
 **1. Uso de Árvores de Busca (como AVL ou BTS) para Stopwords e Frequências de Termos**:
 
-Em vez de um unordered_set para as stopwords, uma estrutura de árvore balanceada (como uma árvore AVL ou BTS) poderia ser usada para armazenar as stopwords ou o índice global de frequência dos termos. 
+Em vez de um `unordered_set` para as stopwords, uma estrutura de árvore balanceada (como uma árvore AVL ou BTS) poderia ser usada para armazenar as stopwords ou o índice global de frequência dos termos. 
 
 Isso permite buscas eficientes com uma complexidade $\ O(log n)$ e uma melhor organização de dados quando há uma grande quantidade de termos ou stopwords. Tendo em vista que os dados são guardados ordenadamente, tornando possível realizar busca por prefixos ou intervalos.
 
