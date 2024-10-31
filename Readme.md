@@ -9,7 +9,6 @@
 ##  Índice :scroll:
 
 * [Trabalho](#trabalho)
-  * [Leitura dos Documentos](#leitura-dos-documentos)
   * [Cálculo do TF/IDF e Ranqueamento](#cálculo-do-tf/idf-e-ranqueamento)
 * [Análise Computacional](#análise-computacional)
   * [Estrutura de dados](#estrutura-de-dados)
@@ -22,130 +21,218 @@
 
 
 ## Trabalho
-Neste trabalho, foi implementado um sistema de ranqueamento de documentos com base no algoritmo TF/IDF (do inglês, Term Frequency-Inverse Document Frequency). Utilizando conceitos da disciplina de Algoritmos e Estrutura de Dados I, como análise assintótica, métodos de ordenação e tabelas hash. Assim funcionando como uma introdução para estruturas mais avançadas, como árvores e grafos.
+Neste trabalho, foi implementado um sistema de ranqueamento de documentos com base no algoritmo TF/IDF (do inglês, Term Frequency-Inverse Document Frequency). Utilizando conceitos da disciplina de Algoritmos e Estrutura de Dados I, como análise assintótica, métodos de ordenação e tabelas hash. 
 
-### Leitura dos Documentos 
-A primeira parte do trabalho se da pela leitura do documento de stopwords[stopwords.txt](dataset/stopwords.txt), que é um documento que contém palavras "que podem ser ignoradas" ou seja não vai me ajudar nos cálculos para o ranqueamento. Assim em sequência 
-
+Para isso foi utilizado como base os documentos: [A_mão_e_a_luva.txt](dataset/A_mão_e_a_luva.txt), [biblia.txt](dataset/biblia.txt), [DomCasmurro.txt](dataset/DomCasmurro.txt), [quincas_borba.txt](dataset/quincas_borba.txt), [Semana_Machado_Assis.txt](dataset/Semana_Machado_Assis.txt) e [terremoto.txt](dataset/terremoto.txt). E para melhora do ranqueamento e da performance do algoritmo foi utilizado o documento de stopwords[stopwords.txt](dataset/stopwords.txt), que contém palavras que em uma busca podem ser consideradas irrelevantes e não vai ajudar nos cálculos para o ranqueamento.
 
 
 ### Cálculo do TF/IDF e Ranqueamento
-Na fase de teste, o segundo arquivo, [poker-hand-testing.data](dataset/poker-hand-testing.data), é lido para avaliar a eficácia do modelo treinado. Este arquivo contém novas instâncias que precisam ser classificadas, e o processo de teste se inicia pela leitura dessas instâncias. Cada linha do arquivo de teste representa uma entrada que será convertida em Features no formato <coluna, elemento>, da mesma maneira que foi feito durante a fase de treinamento.
+O cálculo de TF-IDF (Term Frequency-Inverse Document Frequency) é uma técnica usada para medir a importância de um termo em um documento em relação a um conjunto de documentos (corpus). O objetivo do TF-IDF é destacar termos que são relevantes em um documento específico, mas que não são comuns em todos os documentos, ajudando a identificar termos significativos e relevantes para a busca.
 
-Após essa conversão, a última coluna de cada linha, que indica a classe verdadeira da instância, é separada para servir como referência na avaliação da precisão do modelo. O processo de classificação começa com o algoritmo LAC (Lazy Associative Classification) utilizando as estruturas de dados (map de features e vetor de classes) construídas durante o treinamento.
+Assim o Term Frequency(TF) mede a frequência com que um termo aparece no documento, sendo cálculo realizado pelo numero de recorrências do termo no documento dividido pela quantidade de termos no documento.
 
-Para cada nova instância, o algoritmo busca correspondências nas features já conhecidas e tenta identificar padrões que permitam prever a classe correta. A classe prevista pelo modelo é então comparada com a classe real da instância. Os resultados dessa comparação são registrados para determinar a precisão do modelo: acertos aumentam a contagem de acurácia, enquanto erros aumentam a contagem de perdas.
+O Inverse Document Frequency (IDF) mede a raridade de um termo em todo o conjunto de documentos. A ideia é que termos que aparecem em muitos documentos sejam menos informativos, então o IDF reduz a importância de termos comuns. Sendo cálculado pela fórmula: $\log((1+totalDocumento)/(1+numeroDocumentoComTermos))$.
 
-Ao final do processo, o número da linha e a classe atribuída pelo modelo são gravados no arquivo de saída output.txt. Este arquivo serve como um log detalhado da fase de teste, permitindo a análise dos resultados.
-
-
+Para finalizar é realizada uma multiplicação entre os dois resultados obtidos $\ TF*IDF$, para obter um número que representará a relevância da frase em relação aos documentos do banco de dados.
 ##  Análise Computacional
 
 ### Estrutura de dados
-    Se o código usasse uma lista (list) ou uma fila (queue) para armazenar os termos, ele teria que percorrer a estrutura inteira para contar a frequência de cada termo, o que seria ineficiente.
-    O unordered_map, por outro lado, permite atualizar e acessar a frequência de cada termo diretamente com base na chave (o termo), tornando o processo muito mais rápido.
+Para a realização desse algoritmo foi utlilizado duas tabelas hash `unordered_map` e `unordered_set` para acesso rápido e eficiente dos termos e das stopwords, respectivamente.
 
+O unordered_map é uma estrutura de dados que armazena pares de chave-valor e o unordered_set é uma estrutura que armazena elementos únicos e permite operações de busca, assim como o unordered_map, mas sem valores associados às chaves.
 
+Além disso foi utilizado `vector` para guarda os documentos em uma lista e ordena-los de acordo com a relevância com o cálculo do TF/IDF. Ele foi utilizado também para armazenar os termos importantes das frases de pesquisa do arquivo para ser comparado com os documentos.
+
+Por ultimo também foi utilizado uma `struct Documento` para armazenar informações sobre cada documento como o nome, uma mapa com o valor TF/IDF de cada termo do documento e um double que guarda o resultado final da relevância do documento para a frase de pesquisa.
 
 
 ### Operações e complexidade
-Nessa parte tem-se uma análise mais completa e dedicada à cada função utilizada no trabalho para o seu funcionamento, explicando seus parâmetros, próposito, funcionamento e tempo gasto previsto, sendo essas funções [LSH](#lsh), [calcularSuporte](#calcularsuporte), [Classificação](#classificação), [Testando](#testando) e [Processando](#processando).
-
-
-### Funcionamento
+1.carregarStopwords
 ```Markdown
-bool lsh(map<double, int>* map_lsh, 
-         vector<tuple<int, int>> a, 
-         vector<tuple<int, int>> b,  
-         int* numero_classe,
-         double* jaccard) {
-
-    vector<tuple<int, int>> uniao; 
-    vector<tuple<int, int>> interseccao; 
-
-    set_union(a.begin(), a.end(), b.begin(), b.end(), back_inserter(uniao));
-    set_intersection(a.begin(), a.end(), b.begin(), b.end(), back_inserter(interseccao)); 
-
-    *jaccard = static_cast<double>(interseccao.size()) / uniao.size();
-    *jaccard = std::round(*jaccard * 1000.0) / 1000.0;
-
-
-    if (0.7 < *jaccard && map_lsh->find(*jaccard) != map_lsh->end()) {
-        *numero_classe = map_lsh->at(*jaccard);
-        return true;
-    } else {
-        return false;
+void carregarStopwords(const string& nome_arquivo, unordered_set<string>& stopwords) {
+    ifstream arquivo(nome_arquivo);
+    string palavra;
+    while (arquivo >> palavra) {
+        stopwords.insert(palavra);
     }
 }
 ```
-Propósito: Essa função verifica se a similaridade de Jaccard entre dois conjuntos é suficiente para associar um determinado item a uma classe conhecida. Se a similaridade for acima de um determinado limiar e a classe correspondente for encontrada em um mapa, a função retorna true e define numero_classe para a classe correspondente.
+Nessa operação é realiza a leitura do arquivo das stopwords e as palavras são adicionadas na hash. Seu custo computacional é O(n), dependendo apenas da quantidade de stopwords.
 
-Parâmetros:
-- map_lsh: Mapa que relaciona a similaridade de Jaccard às classes.
-- a, b: Dois vetores de tuplas representando as características dos elementos que estão sendo comparados.
-- numero_classe: Ponteiro para um inteiro onde será armazenada a classe correspondente, se encontrada.
-- jaccard: Ponteiro para um valor double onde será armazenada a similaridade de Jaccard calculada.
-
-Funcionamento:
-- Calcula a união e a interseção dos conjuntos a e b.
-- Calcula a similaridade de Jaccard entre a e b.
-- Se a similaridade for maior que 0,1 e a similaridade existir no map_lsh, a função atribui numero_classe com a classe correspondente e retorna true.
-
-
-### Desempenho 
+2.isStopword
 ```Markdown
-void calcularSuporte(
-    vector<int>combinacoes, 
-    const vector<vector<int>>& classes, 
-    const int features_size,
-    map<vector<int>, double> *result
-) 
-{   
-    for (const auto& c : classes) {
-        vector<int> intersecao;
+bool isStopword(const string& palavra, const unordered_set<string>& stopwords) {
+    return stopwords.count(palavra) > 0;
+}
+```
+A operação verifica se uma palavra é stopword. Apresentando custo O(1) que remete ao custo do acesso a `unordered_set`.
 
-        set_intersection(
-            combinacoes.begin(), combinacoes.end(), 
-            c.begin(), c.end(), 
-            back_inserter(intersecao)
-        );  
+3.removerPontuacao
+```Markdown
+void removerPontuacao(string& palavra) {
+    palavra.erase(remove_if(palavra.begin(), palavra.end(), ::ispunct), palavra.end());
+}
+```
+Nessa parte do código é realizada a remoção da pontuação, pois a pontuação não apresenta importância na pesquisa. Para tal utiliza-se `remove_if` para localizar os caracteres de pontuação e `erase` para remove-los, não apresentando custo expressivo.
 
-        int confianca = intersecao.size();
-        
-        if (confianca > 0) {
-            double suporte = static_cast<double>(confianca) / features_size;
+4.processarDocumento
+```Markdown
+void processarDocumento(const string& nome_arquivo, Documento& doc, unordered_map<string, int>& freqGlobal, const unordered_set<string>& stopwords) {
+    ifstream arquivo(nome_arquivo);
+    string palavra;
+    unordered_map<string, int> freqTermos;
 
-            if (result->find(c) == result->end()) {
-                (*result)[c] = 0;
-            }
-            (*result)[c] += suporte;
+    while (arquivo >> palavra) {
+        removerPontuacao(palavra);
+        transform(palavra.begin(), palavra.end(), palavra.begin(), ::tolower);
+
+        if (!isStopword(palavra, stopwords) && !palavra.empty()) {
+            freqTermos[palavra]++;
+        }
+    }
+
+    int totalTermos = 0;
+    for (const auto& par : freqTermos) {
+        totalTermos += par.second;
+        freqGlobal[par.first]++; 
+    }
+
+    doc.tf_idf.clear(); 
+
+    for (const auto& par : freqTermos) {
+        double TF = static_cast<double>(par.second) / totalTermos;
+        doc.tf_idf[par.first] = TF; 
+    }
+}
+```
+Nesse método é realizada a leitura dos arquivos, transformação da letra para minúscula, contagem da frequência de termos e o cálculo do TF. Apresentando complexidade O(n).
+
+5.calcularIDF
+```Markdown
+void calcularIDF(vector<Documento>& documentos, const unordered_map<string, int>& freqGlobal) {
+    int totalDocumentos = documentos.size();
+
+    for (auto& doc : documentos) {
+        for (auto& par : doc.tf_idf) {
+            const string& termo = par.first;
+            double TF = par.second;
+            int Df = freqGlobal.at(termo);
+
+            double IdF = log(static_cast<double>(1 + totalDocumentos) / (1 + Df));
+
+            doc.tf_idf[termo] = TF * IdF;
         }
     }
 }
 ```
-Propósito: Essa função calcula o suporte de um conjunto de combinações de elementos, comparando-o com classes existentes.
 
-Parâmetros:
-- combinacoes: Vetor de inteiros representando combinações de elementos.
-- classes: Vetor de vetores de inteiros que representam as classes.
-- features_size: Tamanho das características.
-- result: Mapa onde os resultados dos cálculos de suporte são armazenados.
+6.calcularRelevancia
+```Markdown
+void calcularRelevancia(Documento& doc, const vector<string>& frasePesquisa) {
+    doc.relevancia = 0;
+    for (const auto& termo : frasePesquisa) {
+        if (doc.tf_idf.count(termo)) {
+            doc.relevancia += doc.tf_idf[termo];
+        }
+    }
+}
+```
+7.Ordenação
+```Markdown
+void ordenarDocumentos(vector<Documento>& documentos) {
+    sort(documentos.begin(), documentos.end(), [](const Documento& a, const Documento& b) {
+        return a.relevancia > b.relevancia;
+    });
+}
+```
+Para ordenar os documentos de acordo com os resultados obtidos a partir da frase de pesquisa, foi utilizado o `std::sort`.
 
-Funcionamento:
-- Para cada classe, calcula a interseção entre as combinações e os elementos da classe.
-- Se a interseção não for vazia, calcula o suporte (a confiança) e adiciona ao resultado.
+O `std::sort` usa o Introsort, que combina o Quicksort, Heapsort, e Insertion Sort. O Introsort começa com o Quicksort, mas monitora a profundidade da recursão. Se ela ultrapassar um limite, o algoritmo muda para o Heapsort para evitar o pior caso do Quicksort. No final, o Insertion Sort é usado em pequenos segmentos para otimizar ainda mais a ordenação. Tendo um custo $\ O(nlogn)$, o que a torna eficiente para a maioria dos casos.
+
+
+### Funcionamento
+Exemplo de entrada:
+```Markdown
+Deus, seja louvado!
+Amanha vou tomar sorvete
+que dia lindo
+Madrid dia
+```
+Cada frase deve estar em uma linha do arquivo  
+Exemplo de saída: 
+```Markdown
+Ranking dos documentos para a frase: "Deus, seja louvado!"
+dataset/biblia.txt - Relevância: 0.00105657
+dataset/DomCasmurro.txt - Relevância: 0.000236076
+dataset/Semana_Machado_Assis.txt - Relevância: 0.000198816
+dataset/quincas_borba.txt - Relevância: 0.000127848
+dataset/A_mão_e_a_luva.txt - Relevância: 9.52416e-05
+dataset/terremoto.txt - Relevância: 0
+```
+
+### Desempenho 
+Falar sobre uso de memoria O(n)o documento e comparar com arvore e grafo 
 
 
 
 
 ## Análise Crítica
+1. Uso de Árvores
+a) Árvore de Busca (como AVL ou Red-Black Tree) para Stopwords e Frequências de Termos:
+
+    Em vez de um unordered_set para as stopwords, uma estrutura de árvore balanceada (como uma árvore AVL ou Red-Black) poderia ser usada para armazenar as stopwords ou o índice global de frequência dos termos. Isso permite buscas eficientes com uma complexidade O(log n) e uma melhor organização de dados quando há uma grande quantidade de termos ou stopwords.
+    Vantagem: Pode ser mais eficiente para grandes conjuntos de dados onde a busca O(log n) é preferível a buscas em média O(1) (como em hash tables), especialmente se o balanceamento é importante para a estrutura.
+
+b) Árvore Trie para Indexação de Palavras:
+
+    Um Trie (ou Prefix Tree) poderia ser usado para armazenar os termos dos documentos ou as stopwords, facilitando a busca de palavras por prefixos, o que seria útil se houvesse a necessidade de busca aproximada ou de autocompletar palavras.
+    Vantagem: Uma Trie torna as buscas de prefixos muito eficientes e pode ajudar a encontrar termos rapidamente com uma complexidade proporcional ao comprimento da palavra (O(m) onde m é o comprimento da palavra), sem depender do número total de palavras.
+
+c) Árvore de Segmentos para Consultas em Intervalos:
+
+    Uma árvore de segmentos poderia ser útil para calcular estatísticas de frequência de palavras em intervalos específicos do texto, se houvesse a necessidade de analisar documentos em segmentos (como capítulos ou seções).
+    Vantagem: Permite calcular frequências em intervalos específicos de maneira eficiente, o que pode ser útil para análise de subpartes de documentos.
+
+2. Uso de Grafos
+a) Grafo de Similaridade entre Documentos:
+
+    Os documentos podem ser representados como nós em um grafo, com arestas que conectam documentos "similares" (com base em métricas de similaridade, como cosseno ou Jaccard, em função dos termos ou do TF-IDF). Dessa forma, os documentos mais semelhantes ficam próximos uns dos outros.
+    Vantagem: Facilita a recomendação de documentos relacionados. Por exemplo, ao calcular a relevância de um documento específico para uma frase de pesquisa, o sistema também poderia sugerir documentos vizinhos no grafo que têm uma alta similaridade.
+
+b) PageRank ou Algoritmos de Centralidade para Classificação de Documentos:
+
+    Se cada documento fosse um nó e houvesse relações entre eles (como referências, links, ou similaridades), o uso de um algoritmo como PageRank poderia ajudar a classificar os documentos com base na "importância" de cada um.
+    Vantagem: Documentos que são mais centrais ou altamente conectados no grafo poderiam ser ranqueados mais alto, o que poderia ser útil para buscar relevância considerando tanto o conteúdo quanto a interconexão entre documentos.
+
+c) Grafo de Coocorrência de Termos:
+
+    Em vez de apenas armazenar a frequência de cada termo de forma independente, um grafo de coocorrência de termos poderia capturar a relação entre os termos que aparecem juntos nos documentos.
+    Vantagem: Facilita a identificação de termos que frequentemente ocorrem juntos, o que poderia ajudar em tarefas de expansão de consultas ou na detecção de contextos. Isso poderia enriquecer a relevância dos resultados ao considerar a associação de termos.
+
+d) Grafo de Sinônimos e Termos Relacionados:
+
+    Caso o projeto precise lidar com sinônimos, um grafo de sinônimos ou de relações semânticas poderia conectar palavras com significados semelhantes ou relacionados.
+    Vantagem: Ao expandir a pesquisa para incluir sinônimos ou termos relacionados, o sistema poderia oferecer resultados mais relevantes, mesmo se os termos exatos da pesquisa não estiverem no documento. Isso aumenta a cobertura de resultados relevantes para consultas com palavras diferentes.
+
+Vantagens e Desvantagens Comparativas
+
+    Vantagens:
+        Árvores e grafos permitem uma estrutura de dados mais organizada e facilitam a criação de relações complexas entre termos ou documentos.
+        Estruturas de árvore podem garantir tempo de busca eficiente e são úteis para armazenar dados hierarquicamente.
+        Grafos são poderosos para capturar relacionamentos entre documentos ou termos, permitindo não só buscas, mas também análise de relacionamentos (como similaridade, centralidade, ou recomendação).
+    Desvantagens:
+        A implementação e manutenção de árvores e grafos podem ser mais complexas em comparação a estruturas de dados lineares ou hash.
+        O custo de construção de grafos, especialmente se envolver cálculos de similaridade entre todos os documentos, pode ser computacionalmente caro, principalmente para grandes bases de dados.
+        As operações de inserção e atualização podem ser mais lentas em estruturas de árvore balanceadas e grafos, dependendo do número de documentos e do dinamismo da base.
+
+Resumo
+
+    Árvores podem ser mais adequadas para indexação e busca eficiente de palavras, enquanto grafos são ideais para representar relações complexas, como similaridade ou sinônimos.
+    A escolha entre árvores, grafos ou estruturas de dados lineares depende do tamanho do projeto e da necessidade de análise relacional entre documentos. Em projetos de busca mais complexos, o uso de árvores e grafos pode melhorar a precisão e a flexibilidade da pesquisa, mas ao custo de maior complexidade.
 
 
 ## Conclusão 
-Neste trabalho, foi implementado o algoritmo Lazy Associative Classification (LAC)
 
-
-notou-se que a implementação de uma tabela hash para busca de dados foi primordial para a diminuição do tempo de execução.
 
 
 
