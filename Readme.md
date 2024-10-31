@@ -15,9 +15,9 @@
   * [Operações e complexidade](#operações-e-complexidade)
   * [Funcionamento](#funcionamento)
   * [Desemepenho](#desempenho)
+  * [Compilação](#compilação)
 * [Análise Crítica](#análise-crítica)
 * [Considerações Finais](#considerações-finais)
-* [Compilação](#compilação)
 
 
 ## Trabalho
@@ -178,6 +178,16 @@ dataset/A_mão_e_a_luva.txt - Relevância: 9.52416e-05
 dataset/terremoto.txt - Relevância: 0
 ```
 A saída é ordenada com base no resultado obtido dos cálculos e para cada frase uma saída nova é apresentada no terminal.
+
+### Compilação 
+Para executar o programa foi utilizado um arquivo Makefile que realiza o processo de compilação e execução. Arquivo o qual requer as seguintes diretrizes de execução:
+
+| Comando                |  Função                                                                                               |                     
+| -----------------------| ------------------------------------------------------------------------------------------------------|
+|  `make clean`          | Apaga a última compilação realizada contida na pasta build                                            |
+|  `make`                | Executa a compilação do programa utilizando o gcc, e o resultado vai para a pasta build               |
+|  `make run`            | Executa o programa da pasta build após a realização da compilação                                     |
+
 ### Desempenho 
 Falar sobre uso de memoria O(n)o documento e comparar com arvore e grafo 
 
@@ -245,14 +255,6 @@ Resumo
 
 
 
-## Compilação 
-Para executar o programa foi utilizado um arquivo Makefile que realiza o processo de compilação e execução. Arquivo o qual requer as seguintes diretrizes de execução:
-
-| Comando                |  Função                                                                                               |                     
-| -----------------------| ------------------------------------------------------------------------------------------------------|
-|  `make clean`          | Apaga a última compilação realizada contida na pasta build                                            |
-|  `make`                | Executa a compilação do programa utilizando o gcc, e o resultado vai para a pasta build               |
-|  `make run`            | Executa o programa da pasta build após a realização da compilação                                     |
 
 
 
